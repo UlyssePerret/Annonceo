@@ -115,6 +115,7 @@ $content .=" <br> <br>";
 
 <?php
 //--------------------------------------------------------------- 
+// AFFICHAGE du details 
 if( isset($_GET['id_annonce']) && $_GET['action'] == 'afficher' ){
 	$idannonce= $_GET['id_annonce'];
 $content .= " 
@@ -134,12 +135,46 @@ FROM `annonce` WHERE `id_annonce`= $idannonce  ");
 	$content .="<br>";
 }
 ?>
+<?php
+//--------------------------------------------------------------- 
+// ajouter un article
+
+//------------------------------------------------------------------
+if( !empty($_POST) ){ //Si le formulaire a été validé et qu'il y a des infos de dedans (le $_POST n'est pas vide)
+
+	foreach ($_POST as $key => $value) {
+		
+		$_POST[$key] = htmlentities( addslashes($value) );
+	}
+echo "titre :  $_POST[titre]"; // pour tester
+	if( isset($_GET['action']) && $_GET['action'] == 'ajouter_form' ){
+		execute_requete(" 
+			INSERT INTO `annonce`( `titre`, `description_courte`, `description_longue`, `prix`, `photo`, `pays`, `ville`, `adresse`, `cp`, `membre_id`, `photo_id`, `categorie_id`, `date_enregistrement`) 
+			VALUES ( $_POST[titre],
+			");
+
+			header('location:gestion_boutique.php?action=affichage');
+	}
+
+}
+?>
 
 <h1>Affichage des annonces </h1> 
 
-<a href="annonce.php?action=afficher">Afficher les annonces</a>
+<a href="annonce.php?action=afficher">Afficher les annonces</a> <br>
+<a href="annonce.php?action=ajouter">Ajouter une annonce</a>
 <br>
 <?= $content ?>
 
+<?php if( isset($_GET['action']) && ($_GET['action'] == 'ajouter' || $_GET['action'] == 'modification') ) :
+//------------------------------------------------------------------------------------
+ ?>
 
+<form method="post" action="?ajouter_form">
+	<label for='titre'> Titre</label> <br>
+	<input type="text" name="titre" value="titre" placeholder="titre de l'annonce">
+
+	<input type="submit" name="envoyer">
+</form>
+<?php endif; ?>
 <?php require_once('inc/footer.inc.php'); ?>
