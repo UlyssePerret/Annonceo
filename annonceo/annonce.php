@@ -15,25 +15,43 @@ $content .='<form method="GET" action="annonce.php">
 		$content .='<input type="submit" value="Trier">
  		</div>
 	</form>';
+	$content .="<hr> <br>";
+?>
+<!-- Suppression annonce-->
+<?php 
+if( isset($_GET['action']) && $_GET['action'] == 'suppression' ){
+
+	//Récupération des infos de l'annonce à supprimer
+	$r = execute_requete("SELECT * FROM annonce WHERE id_article='$_GET[id_article]' ");
+
+	//Application de la méthode 'fetch' pour pouvoir exploiter les données
+	$article_a_supprimer = $r->fetch(PDO::FETCH_ASSOC);
+
+	execute_requete("DELETE FROM article WHERE id_article= '$_GET[id_article]' ");
+
+	//redirection avec l'affichage des annonces
+	header('location:annonce.php?action=affichage');
+}
 ?>
 <!-- Affichage du tableau-->
 <?php
-
  if (isset($_GET['categorie']) ){ // Cas si il a un trie
-		$value_categorie = $_GET['categorie']  ;
+ 			$value_categorie = $_GET['categorie']  ;
 		//echo "$value_categorie ";
-		$r = execute_requete("SELECT `id_annonce`, a.titre as annonce_titre, `description_courte`, `description_longue`, `prix`, `photo`, `pays`, `ville`, `adresse`, `cp`, m.prenom ,`photo_id`, c.titre as categorie_titre, a.date_enregistrement as date
+		$r = execute_requete("SELECT `id_annonce`, a.titre as annonce_titre, `description_courte`, `description_longue`, `prix`, `photo`, `pays`, `ville`, `adresse`, `cp`, m.prenom ,`photo_id`, c.titre as categorie_titre, 
+			DATE_FORMAT(a.date_enregistrement,'%d/%m/%Y a %H:%i') as date
+
 			FROM `annonce` as a 
 				INNER JOIN membre AS m 
 				ON a.membre_id = m.id_membre 
 				INNER JOIN categorie  AS c
 				ON a.categorie_id = c.id_categorie 
-WHERE categorie_id='$value_categorie' 
-ORDER BY `id_annonce` DESC
-");
+			WHERE categorie_id='$value_categorie' 
+			ORDER BY `id_annonce` DESC ");	
 	}
 	else{ //sinon affichage standard
-		$r = execute_requete(" SELECT `id_annonce`, a.titre as annonce_titre, `description_courte`, `description_longue`, `prix`, `photo`, `pays`, `ville`, `adresse`, `cp`, m.prenom ,`photo_id`, c.titre as categorie_titre, a.date_enregistrement as date
+		$r = execute_requete(" SELECT `id_annonce`, a.titre as annonce_titre, `description_courte`, `description_longue`, `prix`, `photo`, `pays`, `ville`, `adresse`, `cp`, m.prenom ,`photo_id`, c.titre as categorie_titre, 
+			DATE_FORMAT(a.date_enregistrement,'%d/%m/%Y a %H:%i') as date
 			FROM `annonce` as a 
 				INNER JOIN membre AS m 
 				ON a.membre_id = m.id_membre 
@@ -84,20 +102,43 @@ $content .= '<table border=1>';
 
 				$content .= "<td>$annonce[date]</td>";
 				$content .= "<td>
-									<a href='?action=afficher'>Afficher</a>
-									<a href='?action=modifier'>Modifier</a>
-									<a href='?action=supprimer'>Supprimer</a>
+									<a href='?action=afficher&id_annonce=$annonce[id_annonce]'>Afficher</a>
+									<a href='?action=modifier&id_annonce=$annonce[id_annonce]'>Modifier</a>
+									<a href='?action=supprimer&id_annonce=$annonce[id_annonce]'>Supprimer</a>
 								</td>";
 			$content .= '</tr>';		
 		}
 
 $content .= '</table';
-
-//--------------------------------------------------------------- 
+$content .=" <br> <br>";
 ?>
 
-<h1>Affichage des annonces </h1>
+<?php
+//--------------------------------------------------------------- 
+if( isset($_GET['id_annonce']) && $_GET['action'] == 'afficher' ){
+	$idannonce= $_GET['id_annonce'];
+$content .= " 
+	<div> 
+	Referennce de l'annonce :	$idannonce <br>" ;
+	$r = execute_requete(" SELECT titre,description_longue,description_courte,prix,adresse,ville,cp,pays, DATE_FORMAT(date_enregistrement,'%d/%m/%Y a %H:%i:%s') as date 
+FROM `annonce` WHERE `id_annonce`= $idannonce  ");
+		while ( $annonce_details = $r->fetch(PDO::FETCH_ASSOC) ) {
+			 $content .= "Titre : $annonce_details[titre] <br>";
+			 $content .= "Description:<br> $annonce_details[description_courte] <br> $annonce_details[description_longue] <br>";
+			 $content .= "Prix : $annonce_details[prix] € <br> ";
+			 $content .= "Adresse : <br>  $annonce_details[adresse] <br> $annonce_details[cp] $annonce_details[ville] <br> $annonce_details[pays] <br>";
+			 $content .= " Enregistre :$annonce_details[date]";
+		}
 
+	$content .="</div>";
+	$content .="<br>";
+}
+?>
+
+<h1>Affichage des annonces </h1> 
+
+<a href="annonce.php?action=afficher">Afficher les annonces</a>
+<br>
 <?= $content ?>
 
 
