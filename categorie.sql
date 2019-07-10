@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le :  mer. 10 juil. 2019 à 09:38
+-- Généré le :  mer. 10 juil. 2019 à 09:37
 -- Version du serveur :  10.1.38-MariaDB
 -- Version de PHP :  7.2.15
 
@@ -25,46 +25,34 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Structure de la table `note`
+-- Structure de la table `categorie`
 --
 
-CREATE TABLE `note` (
-  `id_note` int(3) NOT NULL,
-  `membre_id1` int(3) NOT NULL,
-  `membre_id2` int(3) NOT NULL,
-  `note` int(3) NOT NULL,
-  `avis` text,
-  `date_enregistrement` datetime NOT NULL
+CREATE TABLE `categorie` (
+  `id_categorie` int(3) NOT NULL,
+  `titre` varchar(255) NOT NULL,
+  `motscles` text
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Déchargement des données de la table `note`
---
-
-INSERT INTO `note` (`id_note`, `membre_id1`, `membre_id2`, `note`, `avis`, `date_enregistrement`) VALUES
-(10277, 8, 9, 3, 'R.A.S', '2018-03-01 19:23:00'),
-(10278, 6, 7, 4, 'merci pour la qualités de nos échanges', '2018-03-02 19:23:00'),
-(10279, 5, 1, 5, 'réponds repaidement au téléphone et aux mails, vendeur sérieux', '2018-03-22 19:23:00');
 
 --
 -- Index pour les tables déchargées
 --
 
 --
--- Index pour la table `note`
+-- Index pour la table `categorie`
 --
-ALTER TABLE `note`
-  ADD PRIMARY KEY (`id_note`);
+ALTER TABLE `categorie`
+  ADD PRIMARY KEY (`id_categorie`);
 
 --
 -- AUTO_INCREMENT pour les tables déchargées
 --
 
 --
--- AUTO_INCREMENT pour la table `note`
+-- AUTO_INCREMENT pour la table `categorie`
 --
-ALTER TABLE `note`
-  MODIFY `id_note` int(3) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10280;
+ALTER TABLE `categorie`
+  MODIFY `id_categorie` int(3) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
