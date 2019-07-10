@@ -62,8 +62,10 @@ $content .= '<table border=1>';
 				$content .= "<td>$annonce[ville]</td>";
 				$content .= "<td>$annonce[adresse]</td>";
 				$content .= "<td>$annonce[cp]</td>";
-
-				$content .= "<td>$annonce[membre_id]</td>";
+				$membre= $annonce['membre_id'];
+				$content .= "<td>$membre</td>";
+				
+				 
 				$content .= "<td>$annonce[categorie_id]</td>";
 
 				$content .= "<td>$annonce[date_enregistrement]</td>";
