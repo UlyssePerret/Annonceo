@@ -1,0 +1,46 @@
+    Gestion des catégories
+    
+    INSERT INTO categorie (titre, motscles) 
+    VALUES ('Emploi', 'Offres d\'emploi') 
+    
+    INSERT INTO categorie (titre, motscles) 
+    VALUES ('Vehicule', 'Voitures, Motos, Bateaux, Vélos, Equipement') 
+    
+    INSERT INTO categorie (titre, motscles) 
+    VALUES ('Immobilier', 'Ventes, Locations, Colocations, Bureaux, Logement') 
+    
+    INSERT INTO categorie (titre, motscles) 
+    VALUES ('Vacances', 'Camping, Hotels, Hôte') 
+    
+    INSERT INTO categorie (titre, motscles) 
+	VALUES ('Multimedia', 'Jeux Vidéos, Informatique, image, Son, Téléphone') 
+    
+    INSERT INTO categorie (titre, motscles) 
+	VALUES ('Loisirs', 'Films, Musique, Livres') 
+    
+    INSERT INTO categorie (titre, motscles) 
+	VALUES ('Materiel', 'Outillage, Fournitures de Bureau, Matériel Agricole' )
+    
+    INSERT INTO categorie (titre, motscles) 
+	VALUES ('Services', 'Prestations de services, Evenements')
+    
+    INSERT INTO categorie (titre, motscles) 
+	VALUES ('Maison', 'Ameublement, Electromenager, Bricolage, Jardinage')
+    
+    INSERT INTO categorie (titre, motscles) 
+	VALUES ('Vetements', 'Jean, Chemise, Robe, Chaussure')
+    
+    INSERT INTO categorie (titre) 
+	VALUES ('Autres')
+    
+    
+    Gestion des notes
+    
+    INSERT INTO note (id_note, membre_id1, membre_id2, avis, date_enregistrement) 
+	VALUES (10279, '216 - amamdine26@gmail.com', '259 - marie.thoyer265@yahoo.fr', 'réponds rapidement au téléphone et aux mails, vendeur sérieux!', '2018-03-22 19:23')
+    
+    INSERT INTO note (id_note, membre_id1, membre_id2, avis, date_enregistrement) 
+	VALUES (10278, '537 - olivier.caroussel@gmail.com', '579 - milan_budislavj@hotmail.com', 'merci pour la qualités de nos échanges!', '2018-03-02 17:01')
+    
+    INSERT INTO note (id_note, membre_id1, membre_id2, avis, date_enregistrement) 
+	VALUES (10277, '179 - jean.robert239@gmail.com', 'g.lafaye3@yahoo.fr', 'R.A.S', '2018-03-01 11:11')
