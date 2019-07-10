@@ -1,8 +1,8 @@
 <?php require_once('inc/header.inc.php'); ?>
-/<!-- Trie -->
+<!-- Trie -->
 <?php
-$content .="Trier par catégorie:";
-$content .=' <form method="GET" action="annonce.php">  
+$content .="Trier par catégorie :";
+$content .='<form method="GET" action="annonce.php">  
 		<div class="form-group">
 			<select class="form-control" name="categorie" id="categorie">';
   				$r = execute_requete(" SELECT * FROM `categorie` ");
@@ -16,7 +16,7 @@ $content .=' <form method="GET" action="annonce.php">
  		</div>
 	</form>';
 ?>
-/<!-- Affichage du tableau-->
+<!-- Affichage du tableau-->
 <?php
 $content .='<h1>Affichage des annonces </h1>';
  	if (isset($_GET['categorie']) ){ // Cas si il a un trie
