@@ -18,14 +18,28 @@ $content .='<form method="GET" action="annonce.php">
 ?>
 <!-- Affichage du tableau-->
 <?php
-$content .='<h1>Affichage des annonces </h1>';
- 	if (isset($_GET['categorie']) ){ // Cas si il a un trie
+
+ if (isset($_GET['categorie']) ){ // Cas si il a un trie
 		$value_categorie = $_GET['categorie']  ;
 		//echo "$value_categorie ";
-		$r = execute_requete("SELECT * FROM `annonce` WHERE `categorie_id`='$value_categorie' ");
+		$r = execute_requete("SELECT `id_annonce`, a.titre as annonce_titre, `description_courte`, `description_longue`, `prix`, `photo`, `pays`, `ville`, `adresse`, `cp`, m.prenom ,`photo_id`, c.titre as categorie_titre, a.date_enregistrement as date
+			FROM `annonce` as a 
+				INNER JOIN membre AS m 
+				ON a.membre_id = m.id_membre 
+				INNER JOIN categorie  AS c
+				ON a.categorie_id = c.id_categorie 
+WHERE categorie_id='$value_categorie' 
+ORDER BY `id_annonce` DESC
+");
 	}
 	else{ //sinon affichage standard
-		$r = execute_requete(" SELECT  * FROM annonce ORDER BY  `id_annonce` DESC");
+		$r = execute_requete(" SELECT `id_annonce`, a.titre as annonce_titre, `description_courte`, `description_longue`, `prix`, `photo`, `pays`, `ville`, `adresse`, `cp`, m.prenom ,`photo_id`, c.titre as categorie_titre, a.date_enregistrement as date
+			FROM `annonce` as a 
+				INNER JOIN membre AS m 
+				ON a.membre_id = m.id_membre 
+				INNER JOIN categorie  AS c
+				ON a.categorie_id = c.id_categorie 
+			ORDER BY `id_annonce` DESC ; ");
 	}
 $content .= '<table border=1>';
 	//Affichage de l'entete :
@@ -40,7 +54,7 @@ $content .= '<table border=1>';
 		$content .= "<th> ville </th>";
 		$content .= "<th> adresse </th>";
 		$content .= "<th> cp </th>";
-		$content .= "<th> membre id </th>";
+		$content .= "<th> membre</th>";
 		$content .= "<th> categorie </th>";
 		$content .= "<th> date d'enregistrement</th>";
 		$content .= "<th> actions</th>";
@@ -50,7 +64,7 @@ $content .= '<table border=1>';
 			//debug($annonce);	
 			$content .= '<tr>';
 				$content .= "<td>$annonce[id_annonce]</td>";
-				$content .= "<td>$annonce[titre]</td>";
+				$content .= "<td>$annonce[annonce_titre]</td>";
 				$content .= "<td>$annonce[description_courte]</td>";
 				$content .= "<td>$annonce[description_longue]</td>";
 				$content .= "<td>$annonce[prix] €</td>";
@@ -62,13 +76,13 @@ $content .= '<table border=1>';
 				$content .= "<td>$annonce[ville]</td>";
 				$content .= "<td>$annonce[adresse]</td>";
 				$content .= "<td>$annonce[cp]</td>";
-				$membre= $annonce['membre_id'];
-				$content .= "<td>$membre</td>";
+ 
+				$content .= "<td><a href='#'>$annonce[prenom]</a></td>";
 				
 				 
-				$content .= "<td>$annonce[categorie_id]</td>";
+				$content .= "<td> <a href='#'> $annonce[categorie_titre] </a></td>";
 
-				$content .= "<td>$annonce[date_enregistrement]</td>";
+				$content .= "<td>$annonce[date]</td>";
 				$content .= "<td>
 									<a href='?action=afficher'>Afficher</a>
 									<a href='?action=modifier'>Modifier</a>
@@ -82,6 +96,9 @@ $content .= '</table';
 //--------------------------------------------------------------- 
 ?>
 
+<h1>Affichage des annonces </h1>
+
 <?= $content ?>
- 
+
+
 <?php require_once('inc/footer.inc.php'); ?>
