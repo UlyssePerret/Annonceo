@@ -3,8 +3,9 @@
 <?php
 $content .="Trier par catégorie :";
 $content .='<form method="GET" action="annonce.php">  
-		<div class="form-group">
+		<div class="form-group col-3">
 			<select class="form-control" name="categorie" id="categorie">';
+			$content .="<option value='' selected hidden> Trier par categorie</option>"	;
   				$r = execute_requete(" SELECT * FROM `categorie` ");
 				while( $categorie = $r->fetch(PDO::FETCH_ASSOC) ){
 					$content .= '<option value="'.$categorie['id_categorie'].'">';
@@ -147,34 +148,110 @@ if( !empty($_POST) ){ //Si le formulaire a été validé et qu'il y a des infos 
 		$_POST[$key] = htmlentities( addslashes($value) );
 	}
 echo "titre :  $_POST[titre]"; // pour tester
-	if( isset($_GET['action']) && $_GET['action'] == 'ajouter_form' ){
+	if( isset($_GET['action']) &&  $_GET['action'] == 'modifier_form' ){
+		execute_requete("UPDATE article SET  
+			titre= '$_POST[titre]',
+
+			WHERE id_annonce = '$_GET[id_anonce]' ");
+
+			header('location:gestion_boutique.php?action=affichage');
+	}
+	elseif( $_GET['action'] == 'ajouter_form' )
+	{
 		execute_requete(" 
 			INSERT INTO `annonce`( `titre`, `description_courte`, `description_longue`, `prix`, `photo`, `pays`, `ville`, `adresse`, `cp`, `membre_id`, `photo_id`, `categorie_id`, `date_enregistrement`) 
-			VALUES ( $_POST[titre],
+			VALUES ( $_POST[titre], $_POST[description_courte],$_POST[description_longue],$_POST[prix],$_POST[categorie_id]
 			");
 
 			header('location:gestion_boutique.php?action=affichage');
 	}
+	
 
 }
 ?>
 
 <h1>Affichage des annonces </h1> 
 
-<a href="annonce.php?action=afficher">Afficher les annonces</a> <br>
+<a href="annonce.php?action=afficher">Afficher toutes les annonces</a> <br>
 <a href="annonce.php?action=ajouter">Ajouter une annonce</a>
 <br>
 <?= $content ?>
 
-<?php if( isset($_GET['action']) && ($_GET['action'] == 'ajouter' || $_GET['action'] == 'modification') ) :
+<?php if( isset($_GET['action']) && ($_GET['action'] == 'ajouter' || $_GET['action'] == 'modifier') ) :
+
+
+	if( isset($_GET['id_annonce']) ){ 
+
+		$r = execute_requete("SELECT * FROM annonce WHERE id_annonce = '$_GET[id_annonce]' ");
+
+		$annonce_actuel = $r->fetch(PDO::FETCH_ASSOC);
+		//debug($article_actuel);
+	}
+
+	$titre = ( isset($annonce_actuel['titre']) ) ? $annonce_actuel['titre'] : '';
+	$description_courte= ( isset($annonce_actuel['description_courte']) ) ? $annonce_actuel['description_courte'] : '';
+	$description_longue= ( isset($annonce_actuel['description_longue']) ) ? $annonce_actuel['description_longue'] : '';
+	$prix= ( isset($annonce_actuel['prix']) ) ? $annonce_actuel['prix'] : '';
+
+	$categorie_1 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '1') ? 'selected' : '';
+	$categorie_2 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '2') ? 'selected' : '';	
+	$categorie_3 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '3') ? 'selected' : '';	
+	$categorie_4 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '4') ? 'selected' : '';
+	$categorie_5 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '5') ? 'selected' : '';
+	$categorie_6 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '5') ? 'selected' : '';
+	$categorie_7 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '5') ? 'selected' : '';
+	$categorie_8 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '5') ? 'selected' : '';
+	$categorie_9 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '5') ? 'selected' : '';
+	$categorie_10 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '5') ? 'selected' : '';
+	$categorie_11 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '5') ? 'selected' : '';
 //------------------------------------------------------------------------------------
  ?>
 
 <form method="post" action="?ajouter_form">
-	<label for='titre'> Titre</label> <br>
-	<input type="text" name="titre" value="titre" placeholder="titre de l'annonce">
+	<div class="form-group">
+		<div class="row">
+			<div class="col-1"></div>
+			<div class="col-4">
 
-	<input type="submit" name="envoyer">
+				<label for='titre'> Titre</label> <br>
+				<input type="text" name="titre"  id="titre"  value="<?= $titre ?>"  placeholder="Titre de l'annonce" class="form-control" >  <br>
+
+				<label for='description_courte'> Description Courte </label> <br>
+				<textarea rows = '3'  type="text" name="description_courte"  id="description_courte"     placeholder="Description courte de votre annonce" class="form-control "  ><?= $description_courte ?> </textarea>  <br>
+
+				<label for='description_longue'> Description longue </label> <br>
+				<textarea rows ='10'  type="text" name="description_longue"  id="description_longue"     placeholder="Description longue de votre annonce" class="form-control  " >
+					<?= $description_longue ?> 
+				</textarea>  <br>
+
+				<label for='prix'>Prix</label>
+				<input type="text" name="prix"  id="prix"  value="<?= $prix?>"  placeholder="Prix figurant dans l'annonce" class="form-control" >  <br>
+
+				<label for='categorie_id'>Catégorie</label>
+			    <select name="categorie_id" id="categorie_id class="form-control  ">
+					<option value="" selected>Toutes les catégories</option>
+					<option value="1" <?= $categorie_1 ?> >Emploi </option>
+					<option value="2" <?= $categorie_2 ?> > Vehicule </option>
+					<option value="3" <?= $categorie_3 ?> > Immobilier </option>
+					<option value="4" <?= $categorie_4 ?> > Vacances </option>
+					<option value="5" <?= $categorie_5 ?> > Multimedia </option>
+					<option value="6" <?= $categorie_6 ?> > Loisirs </option>
+					<option value="7" <?= $categorie_7 ?> > Materiel </option>
+					<option value="8" <?= $categorie_8 ?> > Services </option>
+					<option value="9" <?= $categorie_9 ?> > Maison </option>
+					<option value="10" <?= $categorie_10 ?> > Vetements </option>
+					<option value="11" <?= $categorie_11 ?> > Autres </option>
+				</select><br><br>
+			</div>
+			<div class="col-4">
+
+			</div>
+		</div>
+		<div>
+			<input type="submit" class="btn btn-secondary  " value="<?php echo ucfirst( $_GET['action'] ); ?>">
+		</div>
+	
+	 </div class="form-group">
 </form>
 <?php endif; ?>
 <?php require_once('inc/footer.inc.php'); ?>
