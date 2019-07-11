@@ -8,7 +8,7 @@ $pdo = new PDO('mysql:host=localhost;dbname=annonceo', 'root', '', array(PDO::AT
 //var_dump($pdo);
 
 //Definition d'une constante : 
-define('URL', "http://localhost/php/annonceo/");
+define('URL', "http://localhost/up-php/annonceo/");
 
 //Déclaration d'une variable :
 

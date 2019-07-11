@@ -2,7 +2,7 @@
 <!-- Trie -->
 <?php
 $content .="Trier par catégorie :";
-$content .='<form method="GET" action="gestion-annonce.php">  
+$content .='<form method="GET" action="gestion_annonce.php">  
 		<div class="form-group col-3">
 			<select class="form-control" name="categorie" id="categorie">';
 			$content .="<option value='' selected hidden> Trier par categorie</option>"	;
@@ -31,7 +31,7 @@ if( isset($_GET['action']) && $_GET['action'] == 'supprimer' ){
 	execute_requete("DELETE FROM annonce WHERE id_annonce= '$_GET[id_annonce]' ");
 
 	//redirection avec l'affichage des annonces
-	header('location:gestion-annonce.php?action=affichage');
+	header('location:gestion_annonce.php?action=affichage');
 }
 ?>
 <!-- Affichage du tableau-->
@@ -179,15 +179,17 @@ if( !empty($_POST) ){ //Si le formulaire a été validé et qu'il y a des infos 
 
 	elseif( $_GET['action'] == 'ajouter' )
 	{
-		if( !isset( $_POST[membre_id] ) ) {
-			$membre = 1;
-			echo "$membre " ;
+		if( !isset( $_SESSION['membre'] ) ) {
+				
+			echo " Merci de vous connecter avant d'ajouter un membre" ;
 		}
+		else{
 
+			$membre = $_SESSION['membre'];
+		
 		execute_requete(" 
 			INSERT INTO `annonce`( `titre`, description_courte, description_longue, prix, categorie_id, pays, ville, adresse, cp, membre_id , date_enregistrement ) VALUES ( '$_POST[titre]', '$_POST[description_courte]','$_POST[description_longue]','$_POST[prix]', '$_POST[categorie_id]',  '$_POST[pays]','$_POST[ville]','$_POST[adresse]','$_POST[cp]', '$membre', NOW()  )");
-
- 	header('location:gestion-annonce.php?action=affichage');
+		}
 	}
 //----------------------------------
 	if( isset($_GET['action']) &&  $_GET['action'] == 'modifier' ){
@@ -205,14 +207,14 @@ if( !empty($_POST) ){ //Si le formulaire a été validé et qu'il y a des infos 
 			WHERE id_annonce = $_GET[id_annonce];");
 
 	}
-  	header('location:gestion-annonce.php?action=affichage');
+
 }
 ?>
 
 <h1>Affichage des annonces </h1> 
 
-<a href="gestion-annonce.php?action=afficher">Afficher toutes les annonces</a> <br>
-<a href="gestion-annonce.php?action=ajouter">Ajouter une annonce</a>
+<a href="gestion_annonce.php?action=afficher">Afficher toutes les annonces</a> <br>
+<a href="gestion_annonce.php?action=ajouter">Ajouter une annonce</a>
 <br>
 <?= $content ?>
 
@@ -260,12 +262,12 @@ if( !empty($_POST) ){ //Si le formulaire a été validé et qu'il y a des infos 
 				<input type="text" name="titre"  id="titre"  value="<?= $titre ?>"  placeholder="Titre de l'annonce" class="form-control" >  <br>
 
 				<label for='description_courte'> Description Courte </label> <br>
-				<textarea rows = '3'  type="text" name="description_courte"  id="description_courte"     placeholder="Description courte de votre annonce" class="form-control "  ><?= $description_courte ?> </textarea>  <br>
+				<textarea rows = '3'  type="text" name="description_courte"  id="description_courte"     placeholder="Description courte de votre annonce" class="form-control "  ><?= $description_courte ?></textarea>  <br>
 
 				<label for='description_longue'> Description longue </label> <br>
-				<textarea rows ='10'  type="text" name="description_longue"  id="description_longue"     placeholder="Description longue de votre annonce" class="form-control" >
-					<?= $description_longue ?> 
-				</textarea>  <br>
+
+
+				<textarea rows ='10'  type="text" name="description_longue"  id="description_longue"     placeholder="Description longue de votre annonce" class="form-control" ><?= $description_longue;?></textarea>  <br>
 
 				<label for='prix'>Prix</label>
 				<input type="text" name="prix"  id="prix"  value="<?= $prix?>"  placeholder="Prix figurant dans l'annonce" class="form-control" >  <br>
@@ -308,7 +310,7 @@ if( !empty($_POST) ){ //Si le formulaire a été validé et qu'il y a des infos 
 				</select><br><br>
 
 				<label for="adresse">Adresse</label>
-				<textarea rows = '3'  type="text" name="adresse"  id="adresse"     placeholder="Adresse figurant dans l'annonce " class="form-control "  ><?= $adresse ?> </textarea>  <br>
+				<textarea rows = '3' type="text" name="adresse"  id="adresse" placeholder="Adresse figurant dans l'annonce" class="form-control"><?= $adresse ?></textarea>  <br>
 
 				<label for='ville'>Ville</label>
 				<input type="text" name="ville"  id="ville"  value="<?= $ville?>"  placeholder="Ville" class="form-control" >  <br>	

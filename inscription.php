@@ -87,10 +87,6 @@ if ( $_POST ){// Si on clique sur le bouton submit
   </div>
 </div>
 
-
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-   A
-</div>
 <?= $content; ?>
 
 <?php require_once('inc/footer.inc.php') ?>
