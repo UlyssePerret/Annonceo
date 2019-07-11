@@ -20,15 +20,15 @@ $content .='<form method="GET" action="annonce.php">
 ?>
 <!-- Suppression annonce-->
 <?php 
-if( isset($_GET['action']) && $_GET['action'] == 'suppression' ){
+if( isset($_GET['action']) && $_GET['action'] == 'supprimer' ){
 
 	//Récupération des infos de l'annonce à supprimer
-	$r = execute_requete("SELECT * FROM annonce WHERE id_article='$_GET[id_article]' ");
+	$r = execute_requete("SELECT * FROM annonce WHERE id_annonce='$_GET[id_annonce]' ");
 
 	//Application de la méthode 'fetch' pour pouvoir exploiter les données
 	$article_a_supprimer = $r->fetch(PDO::FETCH_ASSOC);
 
-	execute_requete("DELETE FROM article WHERE id_article= '$_GET[id_article]' ");
+	execute_requete("DELETE FROM annonce WHERE id_annonce= '$_GET[id_annonce]' ");
 
 	//redirection avec l'affichage des annonces
 	header('location:annonce.php?action=affichage');
@@ -103,10 +103,10 @@ $content .= '<table border=1>';
 
 				$content .= "<td>$annonce[date]</td>";
 				$content .= "<td>
-									<a href='?action=afficher&id_annonce=$annonce[id_annonce]'>Afficher</a>
-									<a href='?action=modifier&id_annonce=$annonce[id_annonce]'>Modifier</a>
-									<a href='?action=supprimer&id_annonce=$annonce[id_annonce]'>Supprimer</a>
-								</td>";
+								<a href='?action=afficher&id_annonce=$annonce[id_annonce]'>Afficher</a> <br>";
+								$content .="<a href='?action=modifier&id_annonce=$annonce[id_annonce]'>Modifier</a> <br>";
+							$content .= '<a href="?action=supprimer&id_annonce='. $annonce['id_annonce'] . '" onclick="return( confirm(\' En êtes vous sur ?\'))">Supprimer</a> ';
+							$content .= "</td>";
 			$content .= '</tr>';		
 		}
 
@@ -123,7 +123,7 @@ $content .= "
 	<div> 
 	Referennce de l'annonce :	$idannonce <br>" ;
 	$r = execute_requete(" SELECT titre,description_longue,description_courte,prix,adresse,ville,cp,pays, DATE_FORMAT(date_enregistrement,'%d/%m/%Y a %H:%i:%s') as date 
-FROM `annonce` WHERE `id_annonce`= $idannonce  ");
+		FROM `annonce` WHERE `id_annonce`= $idannonce  ");
 		while ( $annonce_details = $r->fetch(PDO::FETCH_ASSOC) ) {
 			 $content .= "Titre : $annonce_details[titre] <br>";
 			 $content .= "Description:<br> $annonce_details[description_courte] <br> $annonce_details[description_longue] <br>";
@@ -147,26 +147,65 @@ if( !empty($_POST) ){ //Si le formulaire a été validé et qu'il y a des infos 
 		
 		$_POST[$key] = htmlentities( addslashes($value) );
 	}
-echo "titre :  $_POST[titre]"; // pour tester
-	if( isset($_GET['action']) &&  $_GET['action'] == 'modifier_form' ){
-		execute_requete("UPDATE article SET  
-			titre= '$_POST[titre]',
+//--------------------------------
+	// echo "titre :  $_POST[titre]"; // pour tester
+	if( isset($_GET['action']) &&  $_GET['action'] == 'modifier' ){
+		
+		$photo_bdd = $_POST['photo_actuelle'];
 
-			WHERE id_annonce = '$_GET[id_anonce]' ");
-
-			header('location:gestion_boutique.php?action=affichage');
 	}
-	elseif( $_GET['action'] == 'ajouter_form' )
+	//-------------------------
+		//debug($_FILES);
+		//debug($_SERVER);
+	    //debug($_POST);
+
+	if (!empty($_FILES['photo']['name'])) { // Si vous avez uploadé un fichier
+		
+		// Ici, on renomme la photo : 
+		$nom_photo = $_POST['id_annonce'] . '_' . $_FILES['photo']['name'];
+
+		//Chemin pour accéder à la photo en BDD : 
+		$photo_bdd = URL . "photo/$nom_photo";
+
+		//Ou est ce que l'ion veut stocker notre photo :
+		$photo_dossier = $_SERVER['DOCUMENT_ROOT'] . "up-php/annonceo/photo/$nom_photo";
+
+		copy($_FILES['photo']['tmp_name'], $photo_dossier);
+		// copy(arg1, arg2) => fonction prédéfine de php ou :
+			// arg1 : chemin du fichier source
+			// arg2 : chemin de destination 
+	}
+//------------------------------------------------
+
+	elseif( $_GET['action'] == 'ajouter' )
 	{
+		if( !isset( $_POST[membre_id] ) ) {
+			$membre = 1;
+			echo "$membre " ;
+		}
+
 		execute_requete(" 
-			INSERT INTO `annonce`( `titre`, `description_courte`, `description_longue`, `prix`, `photo`, `pays`, `ville`, `adresse`, `cp`, `membre_id`, `photo_id`, `categorie_id`, `date_enregistrement`) 
-			VALUES ( $_POST[titre], $_POST[description_courte],$_POST[description_longue],$_POST[prix],$_POST[categorie_id]
-			");
+			INSERT INTO `annonce`( `titre`, description_courte, description_longue, prix, categorie_id, pays, ville, adresse, cp, membre_id , date_enregistrement ) VALUES ( '$_POST[titre]', '$_POST[description_courte]','$_POST[description_longue]','$_POST[prix]', '$_POST[categorie_id]',  '$_POST[pays]','$_POST[ville]','$_POST[adresse]','$_POST[cp]', '$membre', NOW()  )");
 
-			header('location:gestion_boutique.php?action=affichage');
+ 	header('location:annonce.php?action=affichage');
 	}
-	
+//----------------------------------
+	if( isset($_GET['action']) &&  $_GET['action'] == 'modifier' ){
+		//echo "modification actuel :  $_POST[ville]";
+		execute_requete("UPDATE annonce SET  
+			titre= '$_POST[titre]',
+			description_courte= '$_POST[description_courte]',
+			description_longue= '$_POST[description_longue]',
+			prix= '$_POST[prix]',
+			categorie_id= '$_POST[categorie_id]',
+			pays= '$_POST[pays]',
+			ville= '$_POST[ville]',
+			adresse= '$_POST[adresse]',
+			cp= '$_POST[cp]'
+			WHERE id_annonce = $_GET[id_annonce];");
 
+	}
+  	header('location:annonce.php?action=affichage');
 }
 ?>
 
@@ -198,16 +237,20 @@ echo "titre :  $_POST[titre]"; // pour tester
 	$categorie_3 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '3') ? 'selected' : '';	
 	$categorie_4 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '4') ? 'selected' : '';
 	$categorie_5 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '5') ? 'selected' : '';
-	$categorie_6 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '5') ? 'selected' : '';
-	$categorie_7 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '5') ? 'selected' : '';
-	$categorie_8 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '5') ? 'selected' : '';
-	$categorie_9 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '5') ? 'selected' : '';
-	$categorie_10 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '5') ? 'selected' : '';
-	$categorie_11 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '5') ? 'selected' : '';
+	$categorie_6 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '6') ? 'selected' : '';
+	$categorie_7 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '7') ? 'selected' : '';
+	$categorie_8 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '8') ? 'selected' : '';
+	$categorie_9 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '9') ? 'selected' : '';
+	$categorie_10 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '10') ? 'selected' : '';
+	$categorie_11 =  ( isset($annonce_actuel['categorie_id']) && $annonce_actuel['categorie_id'] == '11') ? 'selected' : '';
+
+	$adresse= ( isset($annonce_actuel['adresse']) ) ? $annonce_actuel['adresse'] : '';
+	$ville= ( isset($annonce_actuel['ville']) ) ? $annonce_actuel['ville'] : '';
+	$cp= ( isset($annonce_actuel['cp']) ) ? $annonce_actuel['cp'] : '';
 //------------------------------------------------------------------------------------
  ?>
 
-<form method="post" action="?ajouter_form">
+<form method="post" enctype="multipart/form-data" >
 	<div class="form-group">
 		<div class="row">
 			<div class="col-1"></div>
@@ -220,7 +263,7 @@ echo "titre :  $_POST[titre]"; // pour tester
 				<textarea rows = '3'  type="text" name="description_courte"  id="description_courte"     placeholder="Description courte de votre annonce" class="form-control "  ><?= $description_courte ?> </textarea>  <br>
 
 				<label for='description_longue'> Description longue </label> <br>
-				<textarea rows ='10'  type="text" name="description_longue"  id="description_longue"     placeholder="Description longue de votre annonce" class="form-control  " >
+				<textarea rows ='10'  type="text" name="description_longue"  id="description_longue"     placeholder="Description longue de votre annonce" class="form-control" >
 					<?= $description_longue ?> 
 				</textarea>  <br>
 
@@ -228,7 +271,7 @@ echo "titre :  $_POST[titre]"; // pour tester
 				<input type="text" name="prix"  id="prix"  value="<?= $prix?>"  placeholder="Prix figurant dans l'annonce" class="form-control" >  <br>
 
 				<label for='categorie_id'>Catégorie</label>
-			    <select name="categorie_id" id="categorie_id class="form-control  ">
+			    <select name="categorie_id" id="categorie_id" class="form-control">
 					<option value="" selected>Toutes les catégories</option>
 					<option value="1" <?= $categorie_1 ?> >Emploi </option>
 					<option value="2" <?= $categorie_2 ?> > Vehicule </option>
@@ -245,12 +288,39 @@ echo "titre :  $_POST[titre]"; // pour tester
 			</div>
 			<div class="col-4">
 
+				<label for="photo">photo</label><br>
+				<input type="file" name="photo" id="photo"><br>
+				<?php
+				if( isset($annonce_actuel)){
+					echo '<i>Vous pouvez uploadez une nouvelle photo </i>';
+
+					echo'<img src="'.$annonce_actuel['photo'].'"width="80">';
+					echo '<input type="hidden" name="photo_actuelle" value="'. 
+					$annonce_actuel['photo'].'">';
+				}
+				?>
+			<br><br>
+
+			<label for="pays">Pays</label>
+				<select name="pays" id="pays" class="form-control">
+					<option value="France" selected  > France </option>
+					<option value="Royaume-uni"  >Royaume-uni</option>
+				</select><br><br>
+
+				<label for="adresse">Adresse</label>
+				<textarea rows = '3'  type="text" name="adresse"  id="adresse"     placeholder="Adresse figurant dans l'annonce " class="form-control "  ><?= $adresse ?> </textarea>  <br>
+
+				<label for='ville'>Ville</label>
+				<input type="text" name="ville"  id="ville"  value="<?= $ville?>"  placeholder="Ville" class="form-control" >  <br>	
+
+				<label for='cp'>Code postal</label>
+				<input type="text" name="cp"  id="cp"  value="<?= $cp?>"  placeholder="Code Postale figurant dans l'annonce" class="form-control" >  <br>
+
+     	 </div>
+     	 </div>
+    		<div class="d-flex  justify-content-center">
+				<input type="submit" class="btn btn-secondary  " value="<?php echo ucfirst( $_GET['action'] ); ?>">
 			</div>
-		</div>
-		<div>
-			<input type="submit" class="btn btn-secondary  " value="<?php echo ucfirst( $_GET['action'] ); ?>">
-		</div>
-	
 	 </div class="form-group">
 </form>
 <?php endif; ?>
