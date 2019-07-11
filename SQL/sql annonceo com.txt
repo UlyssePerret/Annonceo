@@ -1,0 +1,29 @@
+﻿INSERT INTO commentaire(
+    id_commentaire,
+    membre_id,
+    annonce_id,
+    commentaire,
+    date_enregistrement
+    )
+    VALUES(
+        7007, '179 - jean.robert239@gmail.com', '1507 - iPhone 5S', 'Bonjour, le téléphone est-il débloqué ? Merci par avance', '2016-05-26 09:18')
+
+INSERT INTO commentaire(
+    id_commentaire,
+    membre_id,
+    annonce_id,
+    commentaire,
+    date_enregistrement
+    )
+    VALUES(
+        7008, '537 - olivier.caroussel@gmail.com', '1508 - peugeot 406', 'Ok je n'ai pas réussi à vous joindre par téléphone, dites moi quand est-ce que cela est possible ?', '2016-05-26 14:17')
+
+INSERT INTO commentaire(
+    id_commentaire,
+    membre_id,
+    annonce_id,
+    commentaire,
+    date_enregistrement
+    )
+    VALUES(
+        7009, '216 - amandine28@gmail.com', '508 - peugeot 406', 'la voiture m'intéresse mais est-ce que tu peux me préciser s'il y a le carnet d'entretien ?', '2016-05-26 09:18')
